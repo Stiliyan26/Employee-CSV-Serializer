@@ -7,7 +7,6 @@ export function getAllProjectsInfo(tableValues){
         const data = tableValues[i]
         const currentProjectId = data[1];
 
-        //Checks if a projectId already exits in the object
         if (!projects[currentProjectId]){
             projects[currentProjectId] = {
                 employees: {}
@@ -73,7 +72,7 @@ export function getLongestPair(pairs){
         const empId2 = keyPairs[i][2];
 
         let totalTimeSpent = 0;
-        let currentPair = {};
+        let currentPair = [];
 
         for (let j = 0; j < projectIds.length; j++){
             const currentProject = currentKeyPair[projectIds[j]];
@@ -93,8 +92,8 @@ export function getLongestPair(pairs){
         if (longestTotalTimeSpent < totalTimeSpent){
             longestTotalTimeSpent = totalTimeSpent;
 
-            longestPair = currentPair;
-            longestPair[totalTimeSpent] = miliSecondsToDays(longestTotalTimeSpent);
+            longestPair['pairInfo'] = currentPair;
+            longestPair['totalTimeSpent'] = miliSecondsToDays(longestTotalTimeSpent);
         }
     }
 

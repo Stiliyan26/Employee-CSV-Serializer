@@ -6,47 +6,71 @@ import { useState } from 'react';
 import { getAllProjectsInfo, getAllPairs, getLongestPair } from './utils/data'
  
 function App() {
-  const [tableRows, setTableRows] = useState([]);
-  const [longestPair, setLongestPair] = useState({});
+  const [longestPair, setLongestPair] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState({});
+  const [error, setError] = useState("");
 
-  const onCsvHandler = (e) =>
+  const parseCsv = (file) => {
+    return new Promise((reslove, reject) => {
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function (results) {
+          const valueArray = [];
+          
+          results.data.map((d) => {
+            valueArray.push(Object.values(d));
+          });
+
+          reslove(valueArray);
+        },
+        error: (error) => reject(error)
+      });
+    })
+  }
+
+  const onCsvHandler = async (e) =>
   {
     e.preventDefault();
+
     setIsLoading(true);
-    
-    Papa.parse(e.target.files[0], {
-      header: true,
-      skipEmptyLines: true,
-      complete: function (results) {
-        const rowArray = [];
-        const valueArray = [];
-        
-        results.data.map((d) => {
-          rowArray.push(Object.keys(d));
-          valueArray.push(Object.values(d));
-        });
+    setLongestPair(null);
+    setError("");
 
-        const projects = getAllProjectsInfo(valueArray);
-        const pairs = getAllPairs(projects);
-        const longestPair = getLongestPair(pairs);
-      }
-    });
-  };
+    try {
+      const file = e.target.files[0];
+      const valueArray = await parseCsv(file);
 
+      const projects = getAllProjectsInfo(valueArray);
+      const pairs = getAllPairs(projects);
+      const longestPairOfEmp = getLongestPair(pairs);
+
+      setLongestPair(longestPairOfEmp);
+      setIsLoading(false);
+    }
+    catch {
+      setError(error.message);
+    }
+  };  
 
   return (
     <div className="App">
       <div className="container">
-        <input
-          type="file"
-          name="file"
-          onChange={onCsvHandler}
-          accept='.csv'
-          className='input-file'
-        />
-        <EmployeeTable />
+        <label htmlFor='file' className="file-label">
+          <input
+            type="file"
+            name="file"
+            id="file"
+            onChange={onCsvHandler}
+            accept='.csv'
+            className='input-file'
+          />
+          { isLoading ? "Loading..." : "Upload CSV file"}
+        </label>
+
+        { error && <p class="error">{error}</p>}
+
+        { longestPair && <EmployeeTable longestPair={ longestPair }/>}
       </div>
     </div>
   );

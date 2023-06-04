@@ -1,0 +1,24 @@
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 600px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #436849;
+    color: white;
+  }
+  
+td, th {
+    padding: 8px;
+    text-align: center;
+}
+
+tr:nth-child(odd) {
+    background: #385741;
+}
+
+#headers {
+    background: #436849;
+}
+  
